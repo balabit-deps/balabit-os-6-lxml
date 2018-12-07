@@ -1,3 +1,13 @@
+lxml (3.5.0-1ubuntu0.1) xenial-security; urgency=medium
+
+  * SECURITY UPDATE: XSS attacks
+    - Make the cleaner remove javascript URLs
+      that use espacing in in src/lxml/html/clean.py,
+      src/lxml/html/tests/test_clean.txt.
+    - CVE-2018-19787
+
+ -- Leonidas S. Barbosa <leo.barbosa@canonical.com>  Fri, 07 Dec 2018 08:28:49 -0300
+
 lxml (3.5.0-1build1) xenial; urgency=medium
 
   * No-change rebuild to drop python3.4 support.
