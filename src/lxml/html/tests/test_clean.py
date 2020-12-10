@@ -69,6 +69,26 @@ class CleanerTest(unittest.TestCase):
         s = lxml.html.fromstring('<invalid tag>child</another>')
         self.assertEqual('child', clean_html(s).text_content())
 
+    def test_sneaky_noscript_in_style(self):
+        # This gets parsed as <noscript> -> <style>"...</noscript>..."</style>
+        # thus passing the </noscript> through into the output.
+        html = '<noscript><style><a title="</noscript><img src=x onerror=alert(1)>">'
+        s = lxml.html.fragment_fromstring(html)
+
+        self.assertEqual(
+            b'<noscript><style>/* deleted */</style></noscript>',
+            lxml.html.tostring(clean_html(s)))
+
+    def test_sneaky_js_in_math_style(self):
+        # This gets parsed as <math> -> <style>"..."</style>
+        # thus passing any tag/script/whatever content through into the output.
+        html = '<math><style><img src=x onerror=alert(1)></style></math>'
+        s = lxml.html.fragment_fromstring(html)
+
+        self.assertEqual(
+            b'<math><style>/* deleted */</style></math>',
+            lxml.html.tostring(clean_html(s)))
+
 
 def test_suite():
     suite = unittest.TestSuite()
